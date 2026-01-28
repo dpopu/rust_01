@@ -1,8 +1,8 @@
 mod config;
 mod config_loader;
 
-use msg_parser::msg_rules_loader::load_json;
 use config::*;
+use msg_parser::msg_rules_loader::load_json;
 
 use config_loader::cli_parser;
 
