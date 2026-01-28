@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Message Rules",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "regex_start",
+      "msg_type",
+      "content",
+      "expected_nr_of_lines",
+      "use_regex_stop",
+      "regex_stop"
+    ],
+    "properties": {
+      "regex_start": {
+        "type": "string",
+        "minLength": 1,
+        "description": "Regex that marks the start of the message"
+      },
+      "msg_type": {
+        "type": "string",
+        "enum": ["Info", "Debug", "Warning", "Error", "Unspecified"],
+        "description": "Message severity/type"
+      },
+      "content": {
+        "type": "string",
+        "minLength": 1,
+        "description": "Human-friendly description of the message"
+      },
+      "expected_nr_of_lines": {
+        "type": "integer",
+        "minimum": 0,
+        "description": "Number of lines to collect. Use 0 if variable."
+      },
+      "use_regex_stop": {
+        "type": "boolean",
+        "description": "If true, use regex_stop to detect the end of the message"
+      },
+      "regex_stop": {
+        "type": "string",
+        "description": "Regex that marks the end of the message when use_regex_stop is true"
+      }
+    }
+  }
+}

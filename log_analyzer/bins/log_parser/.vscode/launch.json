@@ -1,0 +1,20 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug log_parser",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${workspaceFolder}/../../target/debug/log_parser",
+      "args": [
+        "--in_log_file=${workspaceFolder}/test/data_01/sample.log",
+        "--in_msg_rules=${workspaceFolder}/test/data_01/msg_rules.json",
+        "--out_msgs=${workspaceFolder}/test/data_01/output/msgs.json"
+      ],
+      "cwd": "${workspaceFolder}",
+      "preLaunchTask": "cargo build",
+      "stopOnEntry": false,
+      "sourceLanguages": ["rust"]
+    }
+  ]
+}

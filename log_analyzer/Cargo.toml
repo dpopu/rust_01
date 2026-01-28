@@ -1,0 +1,8 @@
+[workspace]
+members = [
+	"bins/log_parser",
+	"crates/msg_parser",
+]
+
+# Optional: use the new resolver for improved feature unification
+resolver = "2"
