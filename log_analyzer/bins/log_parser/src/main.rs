@@ -12,7 +12,7 @@ fn main() {
 
     let msg_rules_path = Config::get_msg_rules_file();
     match load_json(msg_rules_path.as_str()) {
-        Ok(json) => println!("Msg rules loaded successfully: {}", json),
+        Ok(json) => println!("Msg rules loaded successfully: {:?}", json),
         Err(e) => eprintln!("Failed to load msg rules from {}: {}", msg_rules_path, e),
     }
 
