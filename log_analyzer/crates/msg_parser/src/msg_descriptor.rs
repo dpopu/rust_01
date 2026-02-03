@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 #[macro_export]
 macro_rules! msg_rules_schema_path {
     () => {
@@ -35,13 +37,28 @@ impl MsgType {
             MsgType::Unspecified => "Unspecified",
         }
     }
-    pub fn from_string(s: &str) -> MsgType {
+    // pub fn from_string(s: &str) -> MsgType {
+    //     match s.to_lowercase().as_str() {
+    //         "info" => MsgType::Info,
+    //         "debug" => MsgType::Debug,
+    //         "warning" => MsgType::Warning,
+    //         "error" => MsgType::Error,
+    //         _ => MsgType::Unspecified,
+    //     }
+    // }
+}
+
+impl FromStr for MsgType {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_lowercase().as_str() {
-            "info" => MsgType::Info,
-            "debug" => MsgType::Debug,
-            "warning" => MsgType::Warning,
-            "error" => MsgType::Error,
-            _ => MsgType::Unspecified,
+            "info" => Ok(MsgType::Info),
+            "debug" => Ok(MsgType::Debug),
+            "warning" => Ok(MsgType::Warning),
+            "error" => Ok(MsgType::Error),
+            "unspecifed" => Ok(MsgType::Unspecified),
+            _ => Err(format!("Invalid MsgType string: {}", s)),
         }
     }
 }

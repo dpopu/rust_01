@@ -3,6 +3,7 @@ use serde_json;
 use std::fs::File;
 use std::io::BufReader;
 use std::sync::OnceLock;
+use std::str::FromStr;
 
 static MSG_DESCRIPTORS: OnceLock<Vec<MsgDescriptor>> = OnceLock::new();
 static MSGS_EXTRACT_INFO: OnceLock<Vec<MsgExtractInfo>> = OnceLock::new();
@@ -77,8 +78,8 @@ fn parse_msg_descriptors(
         let msg_type_str = rule
             .get("msg_type")
             .and_then(|v| v.as_str())
-            .unwrap_or("Unspecified");
-        let msg_type = MsgType::from_string(msg_type_str);
+            .unwrap_or("Unspecified");//TODO: revisit to see if you want to throw an error.
+        let msg_type = MsgType::from_str(msg_type_str).unwrap_or(MsgType::Unspecified);
 
         let msg_nr_of_lines = rule
             .get("msg_nr_of_lines")
