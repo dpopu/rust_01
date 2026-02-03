@@ -8,8 +8,7 @@
     "required": [
       "regex_start",
       "msg_type",
-      "content",
-      "expected_nr_of_lines",
+      "msg_nr_of_lines",
       "use_regex_stop",
       "regex_stop"
     ],
@@ -24,12 +23,7 @@
         "enum": ["Info", "Debug", "Warning", "Error", "Unspecified"],
         "description": "Message severity/type"
       },
-      "content": {
-        "type": "string",
-        "minLength": 1,
-        "description": "Human-friendly description of the message"
-      },
-      "expected_nr_of_lines": {
+      "msg_nr_of_lines": {
         "type": "integer",
         "minimum": 0,
         "description": "Number of lines to collect. Use 0 if variable."

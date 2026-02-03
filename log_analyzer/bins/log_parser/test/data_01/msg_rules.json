@@ -2,7 +2,6 @@
   {
     "regex_start": "^\\[INFO\\]",
     "msg_type": "Info",
-    "content": "Information message from application startup",
     "msg_nr_of_lines": 5,
     "use_regex_stop": false,
     "regex_stop": ""
@@ -10,7 +9,6 @@
   {
     "regex_start": "^\\[ERROR\\]",
     "msg_type": "Error",
-    "content": "Error message with stack trace",
     "msg_nr_of_lines": 1,
     "use_regex_stop": false,
     "regex_stop": ""
@@ -18,7 +16,6 @@
   {
     "regex_start": "^\\[DEBUG\\]",
     "msg_type": "Debug",
-    "content": "Debug output for variable inspection",
     "msg_nr_of_lines": 1,
     "use_regex_stop": false,
     "regex_stop": ""
@@ -26,7 +23,6 @@
   {
     "regex_start": "^\\[WARNING\\]",
     "msg_type": "Warning",
-    "content": "Warning message with details until separator",
     "msg_nr_of_lines": 0,
     "use_regex_stop": true,
     "regex_stop": "^---+$"
@@ -34,7 +30,6 @@
   {
     "regex_start": "^\\[TRACE\\]",
     "msg_type": "Debug",
-    "content": "Trace log with nested context info",
     "msg_nr_of_lines": 0,
     "use_regex_stop": true,
     "regex_stop": "^END_OF_TRACE$"

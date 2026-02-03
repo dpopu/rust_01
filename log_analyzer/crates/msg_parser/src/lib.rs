@@ -1,5 +1,6 @@
 pub mod msg_descriptor;
 pub mod msg_rules_loader;
+pub mod processor;
 
 pub fn add(left: u64, right: u64) -> u64 {
     left + right

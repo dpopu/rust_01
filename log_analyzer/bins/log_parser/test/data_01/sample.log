@@ -1,0 +1,45 @@
+[INFO] Application starting: sensor_monitor v2.3.1
+  Initializing GPIO pins: OK
+  Loading configuration from /etc/sensor.conf
+  Connecting to database: localhost:5432
+  System ready - entering main loop
+
+[DEBUG] Sensor reading cycle started (timestamp: 1706630400)
+
+[INFO] Sensor data collection initialized
+  Temperature sensor: /dev/i2c-1 [ONLINE]
+  Pressure sensor: /dev/i2c-2 [ONLINE]
+  Humidity sensor: /dev/i2c-3 [ONLINE]
+  All sensors responsive
+
+[ERROR] Failed to read from humidity sensor at address 0x40: I/O timeout
+
+[WARNING] Memory usage exceeding threshold
+  Current usage: 892 MB / 1024 MB (87%)
+  Recommendation: Consider increasing buffer size or reducing polling frequency
+  Process details: PID=1234, threads=8, handles=142
+-----------------------------------------
+
+[TRACE] Function call stack for sensor_read()
+  -> main() at main.c:45
+  -> event_loop() at event_loop.c:128
+  -> process_sensors() at sensor_mgr.c:89
+  -> sensor_read(id=0x03) at sensor_io.c:234
+  Local variables: retry_count=3, timeout_ms=500, buffer[256]
+END_OF_TRACE
+
+[DEBUG] Checksum validation passed for packet 0x1A2B3C4D
+
+[INFO] Periodic maintenance task executed
+  Cache cleared: 2048 entries removed
+  Log rotation completed: archived to sensor_20260130.log
+  Uptime: 3 days, 14 hours, 23 minutes
+  Next scheduled maintenance: 2026-01-31 00:00:00
+
+[WARNING] Network latency detected on interface eth0
+  Average latency: 245ms (threshold: 100ms)
+  Packet loss: 2.3%
+  Suggested action: Check network cable and switch port
+----------------------------------------
+
+[ERROR] Memory allocation failed in buffer_allocate(): cannot allocate 8388608 bytes

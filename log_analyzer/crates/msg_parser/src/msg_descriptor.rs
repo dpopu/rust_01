@@ -1,3 +1,13 @@
+#[macro_export]
+macro_rules! msg_rules_schema_path {
+    () => {
+        "msg_rules.schema.json"
+    };
+}
+// Embed the schema file directly into the binary at compile time
+// The schema defines the contract for the data structures in this file
+pub const MSG_RULES_SCHEMA: &str = include_str!(msg_rules_schema_path!());
+
 pub enum MsgType {
     Info,
     Debug,
@@ -27,7 +37,7 @@ impl MsgType {
     }
 }
 
-pub struct MsgDescriptor {
+pub struct MsgExtractInfo {
     pub regex_start: String,
     pub msg_type: MsgType,
     pub content: String,
@@ -35,4 +45,16 @@ pub struct MsgDescriptor {
 
     pub use_regex_stop: bool,
     pub regex_stop: String,
+}
+
+pub struct MsgDescriptor {
+    pub extract_info: MsgExtractInfo,
+
+    /// Message start line in original log file
+    pub line_start: usize,
+    /// Message end line in original log file
+    pub line_end: usize,
+
+    /// Source file name from which the message was read
+    pub file_name: String,
 }
