@@ -18,7 +18,7 @@ pub enum MsgType {
     Warning,
     Error,
     /// Fallback variant for messages that don't fit any other category.
-    /// 
+    ///
     /// **Note:** This should only be used when none of the other message types apply.
     /// Users should try to avoid this value as much as possible and prefer using
     /// a more specific type instead.
@@ -26,13 +26,13 @@ pub enum MsgType {
 }
 
 impl MsgType {
-    pub fn to_string(&self) -> String {
+    pub fn to_str(&self) -> &str {
         match self {
-            MsgType::Info => "Info".to_string(),
-            MsgType::Debug => "Debug".to_string(),
-            MsgType::Warning => "Warning".to_string(),
-            MsgType::Error => "Error".to_string(),
-            MsgType::Unspecified => "Unspecified".to_string(),
+            MsgType::Info => "Info",
+            MsgType::Debug => "Debug",
+            MsgType::Warning => "Warning",
+            MsgType::Error => "Error",
+            MsgType::Unspecified => "Unspecified",
         }
     }
     pub fn from_string(s: &str) -> MsgType {

@@ -99,7 +99,6 @@ fn parse_msg_descriptors(
         descriptors.push(MsgExtractInfo {
             regex_start: regex_start,
             msg_type: msg_type,
-            content: "".to_string(),
             msg_nr_of_lines: msg_nr_of_lines,
             use_regex_stop: use_regex_stop,
             regex_stop: regex_stop,
