@@ -8,11 +8,20 @@ macro_rules! msg_rules_schema_path {
 // The schema defines the contract for the data structures in this file
 pub const MSG_RULES_SCHEMA: &str = include_str!(msg_rules_schema_path!());
 
+/// Represents the type and severity level of a log message.
+///
+/// This enum categorizes log messages into different severity levels
+/// for filtering and processing purposes.
 pub enum MsgType {
     Info,
     Debug,
     Warning,
     Error,
+    /// Fallback variant for messages that don't fit any other category.
+    /// 
+    /// **Note:** This should only be used when none of the other message types apply.
+    /// Users should try to avoid this value as much as possible and prefer using
+    /// a more specific type instead.
     Unspecified,
 }
 
@@ -37,18 +46,28 @@ impl MsgType {
     }
 }
 
+/// Information for extracting messages from log files.
+///
+/// This struct contains the regex patterns and configuration needed to identify
+/// and extract messages based on their start/stop patterns.
 pub struct MsgExtractInfo {
     pub regex_start: String,
+    /// The type/severity level of the message (Info, Debug, Warning, Error, etc.)
     pub msg_type: MsgType,
-    pub content: String,
     pub msg_nr_of_lines: usize,
 
     pub use_regex_stop: bool,
     pub regex_stop: String,
 }
 
+/// Descriptor for a parsed message from a log file.
+///
+/// Contains the extracted message content along with metadata about its location
+/// in the original log file and the extraction rules used.
 pub struct MsgDescriptor {
     pub extract_info: MsgExtractInfo,
+
+    pub content: String,
 
     /// Message start line in original log file
     pub line_start: usize,

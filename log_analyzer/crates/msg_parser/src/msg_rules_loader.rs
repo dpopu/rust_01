@@ -1,4 +1,4 @@
-use crate::msg_descriptor::{MSG_RULES_SCHEMA, MsgExtractInfo, MsgDescriptor, MsgType};
+use crate::msg_descriptor::{MSG_RULES_SCHEMA, MsgDescriptor, MsgExtractInfo, MsgType};
 use serde_json;
 use std::fs::File;
 use std::io::BufReader;
@@ -53,14 +53,12 @@ pub fn load_json(path: &str) -> Result<(), serde_json::Error> {
 fn parse_msg_descriptors(
     json_data: &serde_json::Value,
 ) -> Result<Vec<MsgExtractInfo>, serde_json::Error> {
-    let rules_array = json_data
-        .as_array()
-        .ok_or_else(|| {
-            serde_json::Error::io(std::io::Error::new(
-                std::io::ErrorKind::InvalidData,
-                "Expected JSON array at root",
-            ))
-        })?;
+    let rules_array = json_data.as_array().ok_or_else(|| {
+        serde_json::Error::io(std::io::Error::new(
+            std::io::ErrorKind::InvalidData,
+            "Expected JSON array at root",
+        ))
+    })?;
 
     let mut descriptors = Vec::new();
 
