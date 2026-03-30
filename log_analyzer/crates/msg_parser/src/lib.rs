@@ -1,4 +1,5 @@
 pub mod msg_descriptor;
+pub mod msg_log_extractor;
 pub mod msg_rules_loader;
 pub mod processor;
 

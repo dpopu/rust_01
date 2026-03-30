@@ -1,5 +1,7 @@
 use std::str::FromStr;
 
+// use serde_json::de;
+
 #[macro_export]
 macro_rules! msg_rules_schema_path {
     () => {
@@ -14,6 +16,7 @@ pub const MSG_RULES_SCHEMA: &str = include_str!(msg_rules_schema_path!());
 ///
 /// This enum categorizes log messages into different severity levels
 /// for filtering and processing purposes.
+#[derive(Clone, Debug)]
 pub enum MsgType {
     Info,
     Debug,
@@ -63,10 +66,17 @@ impl FromStr for MsgType {
     }
 }
 
+
+impl Default for MsgType {
+    fn default() -> Self {
+        MsgType::Unspecified
+    }
+}
 /// Information for extracting messages from log files.
 ///
 /// This struct contains the regex patterns and configuration needed to identify
 /// and extract messages based on their start/stop patterns.
+#[derive(Clone, Default)]
 pub struct MsgExtractInfo {
     pub regex_start: String,
     /// The type/severity level of the message (Info, Debug, Warning, Error, etc.)
@@ -81,6 +91,7 @@ pub struct MsgExtractInfo {
 ///
 /// Contains the extracted message content along with metadata about its location
 /// in the original log file and the extraction rules used.
+#[derive(Clone, Default)]
 pub struct MsgDescriptor {
     pub extract_info: MsgExtractInfo,
 

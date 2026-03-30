@@ -11,7 +11,7 @@ fn main() {
     Config::validate();
 
     let parser_cfg = processor::ParserConfig {
-        log_file_paths: Config::get_log_file(),
+        log_file_path: Config::get_log_file(),
         msg_rules_path: Config::get_msg_rules_file(),
         output_path: Config::get_out_msgs_file(),
     };

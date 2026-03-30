@@ -1,11 +1,10 @@
-use crate::msg_descriptor::{MSG_RULES_SCHEMA, MsgDescriptor, MsgExtractInfo, MsgType};
+use crate::msg_descriptor::{MSG_RULES_SCHEMA, MsgExtractInfo, MsgType};
 use serde_json;
 use std::fs::File;
 use std::io::BufReader;
-use std::sync::OnceLock;
 use std::str::FromStr;
+use std::sync::OnceLock;
 
-static MSG_DESCRIPTORS: OnceLock<Vec<MsgDescriptor>> = OnceLock::new();
 static MSGS_EXTRACT_INFO: OnceLock<Vec<MsgExtractInfo>> = OnceLock::new();
 
 fn validate_against_schema(json_data: &serde_json::Value) -> Result<(), serde_json::Error> {
@@ -78,7 +77,7 @@ fn parse_msg_descriptors(
         let msg_type_str = rule
             .get("msg_type")
             .and_then(|v| v.as_str())
-            .unwrap_or("Unspecified");//TODO: revisit to see if you want to throw an error.
+            .unwrap_or("Unspecified"); //TODO: revisit to see if you want to throw an error.
         let msg_type = MsgType::from_str(msg_type_str).unwrap_or(MsgType::Unspecified);
 
         let msg_nr_of_lines = rule
