@@ -3,6 +3,7 @@ use crate::msg_rules_loader;
 use regex::Regex;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
+use std::sync::Mutex;
 use std::sync::OnceLock;
 
 struct MsgExtractInfoWithStopRegex {
@@ -14,7 +15,9 @@ struct MsgExtractInfoWithStopRegex {
 static MSG_RULES_LOADER_EXTRACT_INFO_WITH_STOP_REGEX: OnceLock<Vec<MsgExtractInfoWithStopRegex>> =
     OnceLock::new();
 
-static MSG_DESCRIPTORS: OnceLock<Vec<MsgDescriptor>> = OnceLock::new();
+static MSG_DESCRIPTORS: Mutex<Vec<MsgDescriptor>> = Mutex::new(Vec::new());
+static MSG_DESCRIPTORS_MULTI_LINE: Mutex<Vec<MsgDescriptor>> = Mutex::new(Vec::new());
+static MSG_DESCRIPTORS_SINGLE_LINE: Mutex<Vec<MsgDescriptor>> = Mutex::new(Vec::new());
 
 /// Extracts messages from a log file based on loaded extraction rules.
 ///
@@ -27,7 +30,48 @@ static MSG_DESCRIPTORS: OnceLock<Vec<MsgDescriptor>> = OnceLock::new();
 /// # Returns
 /// * `Result<(), Box<dyn std::error::Error>>` - Ok if successful, error otherwise
 pub fn extract_msgs_from_file(in_file: &str) -> Result<(), Box<dyn std::error::Error>> {
+    // TODO: for the moment keep executing this function first so that the regexes are compiled.
     extract_multi_line_msg_with_start_stop_regex(in_file)?;
+    extract_single_line_msgs(in_file)?;
+
+    Ok(())
+}
+
+fn extract_single_line_msgs(in_file: &str) -> Result<(), Box<dyn std::error::Error>> {
+    let f_handle = File::open(in_file)?;
+    let reader = BufReader::new(f_handle);
+
+    let msgs_extract_info = msg_rules_loader::get_msg_extract_info()
+        .ok_or("Rules to extract messages not available")?;
+
+    let mut msgs_descriptors = Vec::new();
+
+    for (line_idx, line) in reader.lines().enumerate() {
+        let line_content = line?;
+
+        for msg_extract_info in msgs_extract_info.iter() {
+            if msg_extract_info.use_regex_stop {
+                continue;
+            }
+
+            let regex_compiled = Regex::new(&msg_extract_info.regex_start)?;
+            if regex_compiled.is_match(&line_content) {
+                let new_msg_descriptor = MsgDescriptor {
+                    extract_info: msg_extract_info.clone(),
+                    content: line_content.clone(),
+                    line_start: line_idx + 1,
+                    line_end: line_idx + 1,
+                    file_name: String::new(),
+                };
+                msgs_descriptors.push(new_msg_descriptor);
+            }
+        }
+    }
+
+    MSG_DESCRIPTORS_SINGLE_LINE
+        .lock()
+        .unwrap()
+        .extend(msgs_descriptors);
 
     Ok(())
 }
@@ -36,6 +80,7 @@ fn extract_multi_line_msg_with_start_stop_regex(
     in_file: &str,
 ) -> Result<(), Box<dyn std::error::Error>> {
     // compile regexes for all MsgExtractInfo with stop regex
+    // TODO: move this to a more central place.
     let _ = MSG_RULES_LOADER_EXTRACT_INFO_WITH_STOP_REGEX.get_or_init(|| {
         let msgs_extract_info = msg_rules_loader::get_msg_extract_info()
             .expect("Rules to extract messages not available");
@@ -72,6 +117,10 @@ fn extract_multi_line_msg_with_start_stop_regex(
         line_idx += 1;
     }
 
+    MSG_DESCRIPTORS_MULTI_LINE
+        .lock()
+        .unwrap()
+        .extend(msgs_with_stop_regex);
     Ok(())
 }
 
