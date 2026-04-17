@@ -35,7 +35,6 @@ pub fn extract_msgs_from_file(in_file: &str) -> Result<(), Box<dyn std::error::E
 fn extract_multi_line_msg_with_start_stop_regex(
     in_file: &str,
 ) -> Result<(), Box<dyn std::error::Error>> {
-
     // compile regexes for all MsgExtractInfo with stop regex
     let _ = MSG_RULES_LOADER_EXTRACT_INFO_WITH_STOP_REGEX.get_or_init(|| {
         let msgs_extract_info = msg_rules_loader::get_msg_extract_info()
@@ -48,13 +47,12 @@ fn extract_multi_line_msg_with_start_stop_regex(
                 let stop_regex_compiled = Regex::new(&msg_extract_info.regex_stop).unwrap();
                 MsgExtractInfoWithStopRegex {
                     msg_extract_info: msg_extract_info.clone(),
-                    start_regex_compiled: {start_regex_compiled},
-                    stop_regex_compiled: {stop_regex_compiled},
+                    start_regex_compiled: { start_regex_compiled },
+                    stop_regex_compiled: { stop_regex_compiled },
                 }
             })
             .collect()
     });
-
 
     let f_handle = File::open(in_file)?;
     let reader = BufReader::new(f_handle);
@@ -64,14 +62,14 @@ fn extract_multi_line_msg_with_start_stop_regex(
     let mut msgs_with_stop_regex = Vec::new();
     let mut line_idx = 0usize;
 
-    let mut start_regex_found = false;
     while line_idx < lines.len() {
-        line_idx += 1; // TODO: remove line. Currently needed to avoid infinite loop.
-        if let Some((extraced_msg, consumed_lines)) = try_extract_message_with_stop_regex(line_idx, &lines)? {
+        if let Some((extraced_msg, consumed_lines)) =
+            try_extract_message_with_stop_regex(line_idx, &lines)?
+        {
             msgs_with_stop_regex.push(extraced_msg);
-        } else {
-            line_idx += 1;
+            line_idx += consumed_lines;
         }
+        line_idx += 1;
     }
 
     Ok(())
@@ -81,10 +79,58 @@ fn try_extract_message_with_stop_regex(
     line_idx: usize,
     lines: &[String],
 ) -> Result<Option<(MsgDescriptor, usize)>, Box<dyn std::error::Error>> {
+    if line_idx >= lines.len() {
+        return Ok(None);
+    }
+
     let msgs_extract_info = msg_rules_loader::get_msg_extract_info()
         .ok_or("Rules to extract messages not available")?;
 
-    let mut new_msg_descriptor: MsgDescriptor = MsgDescriptor::default();
-    let mut consumed_lines = 0usize;
-    Ok(Some((new_msg_descriptor, consumed_lines)))
+    let current_line = &lines[line_idx];
+
+    for msg_extract_info in msgs_extract_info.iter() {
+        if !msg_extract_info.use_regex_stop {
+            continue;
+        }
+
+        let start_regex = Regex::new(&msg_extract_info.regex_start)?;
+        let stop_regex = Regex::new(&msg_extract_info.regex_stop)?;
+
+        if !start_regex.is_match(current_line) {
+            continue;
+        }
+
+        let mut end_idx = line_idx;
+        // Check stop on current line and not on the next one to catch corner case where a single line
+        // has both start and stop regexes.
+        let mut found_stop = stop_regex.is_match(current_line);
+
+        if !found_stop {
+            for idx in (line_idx + 1)..lines.len() {
+                if stop_regex.is_match(&lines[idx]) {
+                    end_idx = idx;
+                    found_stop = true;
+                    break;
+                }
+            }
+        }
+
+        if !found_stop {
+            return Ok(None);
+        }
+
+        let content = lines[line_idx..=end_idx].join("\n");
+        let new_msg_descriptor = MsgDescriptor {
+            extract_info: msg_extract_info.clone(),
+            content,
+            line_start: line_idx + 1,
+            line_end: end_idx + 1,
+            file_name: String::new(),
+        };
+
+        let consumed_lines = end_idx - line_idx + 1;
+        return Ok(Some((new_msg_descriptor, consumed_lines)));
+    }
+
+    Ok(None)
 }
